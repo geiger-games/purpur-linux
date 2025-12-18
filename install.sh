@@ -15,13 +15,19 @@ fi
 # detect root partition
 ROOT_PART=$(df / | tail -1 | awk '{print $1}')
 
-# detect current kernel version
-KERNEL_VER=$(uname -r)
+# detect current kernel and initrd symlinks
+KERNEL_PATH=$(readlink -f /boot/vmlinuz)
+INITRD_PATH=$(readlink -f /boot/initrd.img)
+
+if [[ ! -f "$KERNEL_PATH" || ! -f "$INITRD_PATH" ]]; then
+    echo "Kernel or initrd not found in /boot"
+    exit 1
+fi
 
 # grub menuentry template
 ENTRY="menuentry \"termOS\" {
-    linux /boot/vmlinuz-${KERNEL_VER} root=${ROOT_PART} rw init=${TERMOS_PATH}
-    initrd /boot/initrd.img-${KERNEL_VER}
+    linux ${KERNEL_PATH} root=${ROOT_PART} rw init=${TERMOS_PATH}
+    initrd ${INITRD_PATH}
 }"
 
 # write to /etc/grub.d/42_termOS
