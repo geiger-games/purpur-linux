@@ -15,25 +15,19 @@ pm_start:
 	; set up color
 	mov al, [background_color]
 	rol al, 4
-	or al, [foreground_color]
+	or al, [text_color]
 	mov [color], al
 
 	call clear
 
 	mov edi, 0xb8000
-	mov esi, msg
+	mov esi, welcomeMsg
 	call print
-	mov edi, 0xb80a0 ; one line ahead
 
-	mov al, 0xfe
-	call print_byte
+	jmp inputloop
 
 inputloop:
-	mov al, '|'
-	call printchar
-
 	call getkey
-	call print_byte
 
 	mov al, byte [kbuf]
 	call printchar
@@ -48,7 +42,7 @@ print_byte:
 	call print_nibble
 	ret
 print_nibble:
-	ror al, 4
+	ror eax, 4
 	mov bl, al
 	and bl, 0b00001111
 
@@ -73,8 +67,35 @@ done:
 	ret
 
 printchar:
+	cmp al, 0x08
+	je .backspace
+	cmp al, 0x0d
+	je .carriageret
+	cmp al, 0x0a
+	je .newline
 	mov ah, [color]
 	stosw
+
+	ret
+.backspace:
+	sub edi, 2
+	mov ah, [color]
+	mov al, 0x20
+	stosw
+	sub edi, 2
+
+	ret
+.newline:
+	inc byte [line]
+	add edi, 0xa0 ; move ahead 80 words = 1 line
+
+	ret
+.carriageret:
+	movzx eax, byte [line]
+	imul eax, 0xa0
+	add eax, 0xb8000
+	mov edi, eax
+
 	ret
 
 print:
@@ -93,10 +114,11 @@ getkey:
 	cmp al, 0xe1
 	je getkey
 
-	push ebx
 	in al, 0x60
 	test al, 0b10000000
 	jnz getkey
+
+	push ebx
 	movzx eax, al            ; zero-extend AL to EAX
 	mov bl, [scancode_table + eax]
 	mov byte [kbuf], bl
@@ -105,12 +127,12 @@ getkey:
 	ret
 
 clear:
-    mov edi, 0xb8000        ; VGA mem start
-    mov ecx, 80*25          ; total characters
+	mov edi, 0xb8000        ; VGA mem start
+	mov ecx, 80*25          ; total characters
 	mov ah, [color]         ; color
-    mov al, 0x20            ; space
-    rep stosw               ; write ECX words
-    ret
+	mov al, 0x20            ; space
+	rep stosw               ; write ECX words
+	ret
 
 ; ------------------------
 ; config - build after modifying to apply changes
@@ -133,21 +155,26 @@ clear:
 ; 14 = Yellow
 ; 15 = White
 
-background_color db 1
-foreground_color db 15
+background_color db 8
+text_color db 1
 color db 0
 
 ; ------------------------
 ; data
-msg db "Hello 32-bit protected mode!",0
+welcomeMsg 	db "  /\----/\",0x0d,0x0a
+		db " /  \  /  \",0x0d,0x0a
+		db "| terminal |",0x0d,0x0a
+		db " \  /OS\  /",0x0d,0x0a
+		db "  \/----\/",0x0d,0x0a
 
 kbuf db 0,0
+line db 0
 
 scancode_table:
-	db "................" ; 0x
+	db "..............", 0x08, "." ; 0x
 	db "qwertyuiop....as" ; 1x
 	db "dfghjkl.....zxcv" ; 2x
-	db "bnm....°........" ; 3x
+	db "bnm.....@ ......" ; 3x
 	db "................" ; 4x
 	db "................" ; 5x
 	db "................" ; 6x
