@@ -1,1 +1,3 @@
-qemu-system-i386 -drive format=raw,file=termOS.img
+qemu-system-i386 \
+    -m 16M \
+    -drive format=raw,file=termOS.img

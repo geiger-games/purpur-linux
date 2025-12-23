@@ -159,6 +159,9 @@ background_color db 8
 text_color db 1
 color db 0
 
+; --- memory size ---
+msze dd 0x10000
+
 ; ------------------------
 ; data
 welcomeMsg 	db "  /\----/\",0x0d,0x0a
@@ -188,7 +191,9 @@ scancode_table:
 	db "................" ; ex
 	db "................" ; fx
 
-mbuf:
-	times 2048 db 0
+; --- memory stuff ---
+mbuf equ 0x100000
+mptr dd mbuf
+mfre dd 0x0
 
 times 4096-($-$$) db 0
