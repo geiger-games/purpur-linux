@@ -1,4 +1,6 @@
 
+// yes, this is literally supposed to be a kernel ;-;
+
 #define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
@@ -68,7 +70,7 @@ int main() {
 	pid_t pid = fork();
 
 	if (pid == 0) {
-		execl("/sbin/shell", "shell", NULL);
+		execl("/bin/tosh", "tosh", NULL);
 		perror("exec shell failed");
 		_exit(127);
 	}
