@@ -1,6 +1,6 @@
-gcc ./main.c -o ./termOS
+gcc ./main.c -o ./purpur-linux-PID1
 
-gcc ./bin/tosh.c -o ./bin/tosh
+gcc ./bin/push.c -o ./bin/push
 
 gcc ./bin/calc.c -o ./bin/calc
 gcc ./bin/docrd.c -o ./bin/docrd

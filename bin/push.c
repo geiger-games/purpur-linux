@@ -15,7 +15,7 @@ int main(void) {
 	char binPath[128] = {0};
 	int retStatus = 0;
 	while (1) {
-		write(STDOUT_FILENO, "tosh> ", 6);
+		write(STDOUT_FILENO, "push> ", 6);
 		if (fgets(buf, 255, stdin)) {
 			buf[strcspn(buf, "\n")] = '\0';
 		}

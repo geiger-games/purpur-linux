@@ -61,16 +61,17 @@ int main() {
 
 	TERM_CLEAR();
 
-	puts("  /\\----/\\ \n"
-		  " /  \\  /  \\ \n"
-		  "| terminal |\n"
-		  " \\  /OS\\  /\n"
-		  "  \\/----\\/");
+	puts("  /\\--=--/\\ \n"
+		  " /  \\   /  \\ \n"
+		  "|    |=|    |\n"
+		  " \\  /   \\  /\n"
+		  "  \\/--=--\\/");
+   puts("Purpur Linux\n");
 
 	pid_t pid = fork();
 
 	if (pid == 0) {
-		execl("/bin/tosh", "tosh", NULL);
+		execl("/bin/push", "push", NULL);
 		perror("exec shell failed");
 		_exit(127);
 	}

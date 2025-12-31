@@ -9,7 +9,7 @@ exec tail -n +3 \$0
 
 menuentry "termOS" {
   search --fs-uuid --set=root $UUID
-  linux /kernel root=UUID=$UUID rw init=/termOS quiet
+  linux /kernel root=UUID=$UUID rw init=/purpur-linux-PID1 quiet
   initrd /initrd
 }
 EOF
